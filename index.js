@@ -79,6 +79,6 @@ async function main() {
     console.log(quote)
 }
 
-main();
+//main();
 
 module.exports = {getDetailedQuote, DetailedQuote, getFullDetailedQuote, FullDetailedQuote};
