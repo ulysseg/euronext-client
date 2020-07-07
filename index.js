@@ -26,7 +26,7 @@ async function getDetailedQuote(isin, market) {
     const html = await response.text();
     const root = HTMLParser.parse(html);
     const instrumentName = root.querySelector('#header-instrument-name').text.trim();
-    const price = Number(root.querySelector('#header-instrument-price').innerHTML);
+    const price = parseEuronextNumber(root.querySelector('#header-instrument-price').innerHTML);
     return new DetailedQuote(instrumentName, price);
 }
 
@@ -51,8 +51,9 @@ async function getFullDetailedQuote(isin, market) {
         const td = tds[i];
         if (td.text === '52 Week') {
             tokens = tds[i+1].text.split(/\s+/);
-            _52weekLow = Number(tokens[2]);
-            _52weekHigh = Number(tokens[4]);
+            // Thousands are comma separated like this 1,000
+            _52weekLow = parseEuronextNumber(tokens[2]);
+            _52weekHigh = parseEuronextNumber(tokens[4]);
             break;
         }
     }
@@ -60,22 +61,35 @@ async function getFullDetailedQuote(isin, market) {
     return new FullDetailedQuote(_52weekLow, _52weekHigh);
 }
 
+function parseEuronextNumber(s) {
+    return Number(s.replace(/,/g, ''));
+}
+
 class DetailedQuote {
     constructor(instrumentName, instrumentPrice) {
         this.instrumentName = instrumentName;
-        this.instrumentPrice = instrumentPrice;
+        this.instrumentPrice = checkIsNumber(instrumentPrice);
     }
 }
 
 class FullDetailedQuote {
     constructor(_52weekLow, _52weekHigh) {
-        this._52weekLow = _52weekLow;
-        this._52weekHigh = _52weekHigh;
+        this._52weekLow = checkIsNumber(_52weekLow);
+        this._52weekHigh = checkIsNumber(_52weekHigh);
     }
 }
 
+// Maybe a better way to do this? A library?
+function checkIsNumber(n) {
+    if (Number.isNaN(n) || typeof(n) !== 'number') {
+        throw new Error(`${n} is not a number`);
+    }
+    return n;
+}
+
 async function main() {
-    const quote = await getFullDetailedQuote('FR0000133308', 'XPAR');
+    // const quote = await getFullDetailedQuote('FR0000133308', 'XPAR');
+    const quote = await getFullDetailedQuote('NL0012969182', 'XAMS');
     console.log(quote)
 }
 
