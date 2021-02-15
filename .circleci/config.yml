@@ -9,5 +9,9 @@ workflows:
      triggers:
        - schedule:
            cron: "0 20 * * *"
+           filters:
+             branches:
+               only:
+                 - master
      jobs:
        - node/test
