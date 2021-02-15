@@ -5,3 +5,9 @@ workflows:
   node-tests:
     jobs:
       - node/test
+  nightly:
+     triggers:
+       - schedule:
+           cron: "0 20 * * *"
+     jobs:
+       - node/test
