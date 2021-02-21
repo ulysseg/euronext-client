@@ -1,7 +1,11 @@
 {
   "name": "euronext-client",
   "version": "1.0.0",
-  "description": "",
+  "description": "live.euronext.com client",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ulysseg/euronext-client.git"
+  },
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha"
